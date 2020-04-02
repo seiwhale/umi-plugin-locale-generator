@@ -1,4 +1,4 @@
-# umi-plugin-local-generator
+# umi-plugin-locale-generator
 
 编写一个多语言 `json` 文件，配置插件，启动项目即可自动生成 `umi-plugin-locale` 多语言所需代码结构。
 
@@ -6,10 +6,10 @@
 
 ``` bash
 # step 1
-$ git clone https://github.com/seiwhale/umi-plugin-local-generator.git`
+$ git clone https://github.com/seiwhale/umi-plugin-locale-generator.git`
 
 # step 2
-$ cd umi-plugin-local-generator
+$ cd umi-plugin-locale-generator
 
 # step 3
 yarn
@@ -45,7 +45,7 @@ Configure in `.umirc.js`,
 ```js
 export default {
   plugins: [
-    ['umi-plugin-local-generator', options],
+    ['umi-plugin-locale-generator', options],
   ],
 }
 ```

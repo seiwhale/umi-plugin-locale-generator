@@ -1,12 +1,12 @@
 {
-  "name": "umi-plugin-local-generator",
+  "name": "umi-plugin-locale-generator",
   "version": "0.0.1",
   "description": "A umi plugin for provide internationalization function by better method.",
   "authors": {
     "name": "Seiwhale",
     "email": "lisijie519@dingtalk.com"
   },
-  "repository": "/umi-plugin-local-generator",
+  "repository": "https://github.com/seiwhale/umi-plugin-locale-generator.git",
   "peerDependencies": {
     "umi": "2.x || ^2.9.0-0"
   },
