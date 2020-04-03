@@ -2,7 +2,14 @@
 // - https://umijs.org/plugin/develop.html
 import { IApi } from 'umi-types';
 const { join } = require('path');
-const { existsSync, readdirSync, statSync, mkdirSync, readFileSync, writeFile } = require('fs');
+const {
+  existsSync,
+  readdirSync,
+  statSync,
+  mkdirSync,
+  readFileSync,
+  writeFile
+} = require('fs');
 
 /**
  * 插件配置项
@@ -27,12 +34,16 @@ type GetLocalFiles = (absSrcPath: string, singular: boolean) => LocaleItem[];
 /**
  * Get locale files
  */
-export const getLocaleFiles: GetLocalFiles = (absSrcPath: string, singular: boolean) => {
+export const getLocaleFiles: GetLocalFiles = (
+  absSrcPath: string,
+  singular: boolean
+) => {
   // locale file list
   const localeList: LocaleItem[] = [];
   const localePath = join(absSrcPath, singular ? '_locale' : '_locales');
 
-  if (existsSync(localePath)) {   // if exist
+  if (existsSync(localePath)) {
+    // if exist
     const localePaths = readdirSync(localePath);
     for (let i = 0; i < localePaths.length; i++) {
       const path = localePaths[i];
@@ -44,22 +55,21 @@ export const getLocaleFiles: GetLocalFiles = (absSrcPath: string, singular: bool
         // push file into localeList
         localeList.push({
           fullPath,
-          name: fileInfo[1],
-        })
+          name: fileInfo[1]
+        });
       }
     }
   }
 
   return localeList;
-}
+};
 
 /**
  * 插件主函数
- * @param api 
- * @param options 
+ * @param api
+ * @param options
  */
-export default function (api: IApi, options: IOptions) {
-
+export default function(api: IApi, options: IOptions) {
   options = options || {};
 
   // 监听插件配置变化
@@ -82,8 +92,7 @@ export default function (api: IApi, options: IOptions) {
     for (let i = 0; i < languages.length; i++) {
       const lang = languages[i];
       const stats = statSync(join(localePath, lang));
-      if (!stats.isDirectory())
-        mkdirSync(join(localePath, lang));
+      if (!stats.isDirectory()) mkdirSync(join(localePath, lang));
     }
 
     // 申明入口文件数据
@@ -102,33 +111,36 @@ export default function (api: IApi, options: IOptions) {
       const fileString: string = fileBuffer.toString();
 
       try {
-
         const fileData = JSON.parse(fileString);
 
         for (let j = 0; j < languages.length; j++) {
           const lang = languages[j];
           const langPath = join(localePath, lang);
-          const langName = lang.replace(/^([a-z]{2})-([A-Z]{2})$/, "$1$2");
+          const langName = lang.replace(/^([a-z]{2})-([A-Z]{2})$/, '$1$2');
           const langData = {
             [langName]: {}
           };
 
           //入口文件数据保存
-          indexHeaderData.push(`import ${name} from './${lang}/${name}';\n`)
-          indexFooterData.push(`...${name},\n`)
+          indexHeaderData.push(`import ${name} from './${lang}/${name}';\n`);
+          indexFooterData.push(`...${name},\n`);
 
           // 循环文件内容
-          Object.keys(fileData).forEach((key) => {
-            langData[langName][key] = fileData[key][lang]
-          })
+          Object.keys(fileData).forEach(key => {
+            langData[langName][key] = fileData[key][lang];
+          });
 
-          const writeData = `export default ${JSON.stringify(langData[langName])}`;
+          const writeDataArr = Object.entries(langData[langName]);
+          let writeData = `export default {\n`;
+          writeDataArr.forEach((item, index) => {
+            writeData += `\t${item[0]}: "${item[1]}",\n`;
+          });
+          writeData += '}';
 
           writeFile(`${join(langPath, name)}.js`, writeData, (err, data) => {
             if (err) {
               throw err;
             }
-            console.log(`${lang}_${name}数据写入成功！`);
           });
         }
       } catch (error) {
@@ -143,7 +155,7 @@ export default function (api: IApi, options: IOptions) {
       const lang = languages[i];
       let headerStr = '';
       let footerStr = '';
-      for (let j = 0; j < indexHeaderData.length; j+=languages.length) {
+      for (let j = 0; j < indexHeaderData.length; j += languages.length) {
         const headerEle = indexHeaderData[j];
         const footerEle = indexFooterData[j];
         headerStr += headerEle;
@@ -156,10 +168,9 @@ export default function (api: IApi, options: IOptions) {
         if (err) {
           throw err;
         }
-        console.log(`${lang}入口文件写入成功！`);
-      })
+      });
     }
-  })
+  });
 
   // 添加对 _locale 文件的 watch
   addPageWatcher(join(absSrcPath, config.singular ? '_locale' : '_locales'));
@@ -168,9 +179,4 @@ export default function (api: IApi, options: IOptions) {
   api.chainWebpackConfig(config => {
     // console.log(config.toString());
   });
-
-
 }
-
-
-
