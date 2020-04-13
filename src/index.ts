@@ -78,7 +78,7 @@ export default function(api: IApi, options: IOptions) {
     api.rebuildTmpFiles();
   });
 
-  const { beforeDevServer, addPageWatcher, config, paths } = api;
+  const { beforeDevServer, addPageWatcher, config, paths, log } = api;
   const { singular } = config;
   const { absSrcPath } = paths;
   const { path = './', languages = ['zh-CN', 'en-US'] } = options;
@@ -170,6 +170,8 @@ export default function(api: IApi, options: IOptions) {
         }
       });
     }
+
+    log.success('locale files is done!');
   });
 
   // 添加对 _locale 文件的 watch
